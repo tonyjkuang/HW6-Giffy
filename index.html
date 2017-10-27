@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>GifTastic</title>
+	<meta charset="UTF-8">
+  	<meta name="viewport" content="width=device-width, inital-scale=1">
+  	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  	<link rel="stylesheet" href="style.css">
+  	<link href="https://fonts.googleapis.com/css?family=Saira" rel="stylesheet">
+  	<link rel="icon" href="favicon.ico">
+</head>
+<body>
+	<div class="container">
+		<div class="jumbotron">Your Favorite TV Shows</div>
+		
+		<div class="row">
+			<div class="col-md-8">
+				<div id="buttons-view"> </div>		
+			</div>
+		
+			<div class="col-md-4 col-md-offset-8">
+					<form id="show-form">
+				      <label for="show-input">Add a Show Bro</label><br>
+				      <input type="text" id="show-input" size="40"><br>
+				      <br>
+				      <input class="btn btn-warning" id="add-show" type="submit" value="Submit">
+				    </form>
+			</div>
+		</div>
+			
+			
+		    <br>
+		    <div id="shows-view"></div>
+
+			<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    		<script type="text/javascript">
+
+    		
+    		var shows = ["Breaking Bad", "Walking Dead", "Friends", "WestWorld", "Dexter", "Game of Throne", "Big Bang Theory", "Grey's Anatomy", "Supernatural", "Sherlock", "The Grand Tour"];
+    		
+
+		      function displayShowInfo() {
+
+		        var show = $(this).attr("data-name");
+		        var queryURL = "http://api.giphy.com/v1/gifs/search?q=" + show + "&api_key=REgPEp2sCravDfUJj3nYycDVkGHRzr1Q&limit=10";
+
+		        $.ajax({
+		          url: queryURL,
+		          method: "GET"
+		        }).done(function(response) {
+		        	var results = response.data;
+		        	for ( var j = 0; j < results.length; j++) {
+		        		var gifDiv = $("<div class='item'>");
+		        		var rating = results[j].rating;
+		        		var p = $("<p>").text("Rating: " + rating);
+		        		var showImage = $("<img>");
+		        		//add a class to new img
+		        		showImage.addClass("gif");
+		        		//attribute image to show
+		        		showImage.attr("src", results[j].images.original_still.url);
+		        		//attribute animated image
+		        		showImage.attr("data-animate", results[j].images.original.url);
+		        		//attribute still image
+		        		showImage.attr("data-still", results[j].images.original_still.url);
+		        		//set image still
+		        		showImage.attr("data-state", "still");
+
+		        		showImage.attr("width", "200");
+		        		showImage.attr("height", "150");
+
+		        		gifDiv.append(p);
+		        		gifDiv.append(showImage);
+		        		$("#shows-view").prepend(gifDiv);
+		        		}
+		        	
+		          renderButtons();
+
+		        });
+		        $("#shows-view").empty();
+		      }
+
+		      // Function for displaying movie data
+		      function renderButtons() {
+
+		        // Deleting the buttons prior to adding new movies
+		        // (this is necessary otherwise you will have repeat buttons)
+		        $("#buttons-view").empty();
+
+		        // Looping through the array of movies
+		        for (var i = 0; i < shows.length; i++) {
+
+		          // Then dynamicaly generating buttons for each movie in the array
+		          // This code $("<button>") is all jQuery needs to create the beginning and end tag. (<button></button>)
+		          var a = $("<button>");
+		          // Adding a class of movie to our button
+		          a.addClass("show");
+		          a.addClass("btn btn-primary")
+		          // Adding a data-attribute
+		          a.attr("data-name", shows[i]);
+		          // Providing the initial button text
+		          a.text(shows[i]);
+		          // Adding the button to the buttons-view div
+		          $("#buttons-view").append(a);
+		        }
+		      }
+
+		      // This function handles events where one button is clicked
+		      $("#add-show").on("click", function(event) {
+		        event.preventDefault();
+
+		        // This line grabs the input from the textbox
+		        var show = $("#show-input").val().trim();
+
+		        // Adding the movie from the textbox to our array
+		        shows.push(show);
+		        
+
+		        // Calling renderButtons which handles the processing of our movie array
+		        renderButtons();
+		        $("#show-input").val("");
+		      });
+
+		      $(document).on("click", ".gif", function() {
+		      	var state = $(this).attr("data-state");
+
+		      	if (state === "still") {
+		      		$(this).attr("src", $(this).attr("data-animate"));
+		      		$(this).attr("data-state", "animate");
+		      	} else {
+		      		$(this).attr("src", $(this).attr("data-still"));
+		      		$(this).attr("data-state", "still");
+		      	}
+		 
+		      });
+		      
+		      // Function for displaying the movie info
+		      // Using $(document).on instead of $(".movie").on to add event listenersto dynamically generated elements
+		      $(document).on("click", ".show", displayShowInfo);
+
+		      // Calling the renderButtons function to display the intial buttons
+		      renderButtons();
+      </script>
+	</div>
+
+</body>
+</html>

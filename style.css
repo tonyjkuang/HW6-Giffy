@@ -1,0 +1,35 @@
+body {
+	background-image: url(background.jpg);
+	background-repeat: repeat;
+    background-position: center; 
+}
+
+.jumbotron {
+	font-family: 'Saira', sans-serif;
+	text-align: center;
+	font-size: 50px;
+	background-color: grey;
+	color: yellow;
+}
+
+#shows-view {
+	color: white;
+}
+
+.item {
+	float: left;
+	margin: 10px;
+}
+
+button {
+	float: left;
+	margin: 10px;
+}
+
+form {
+	font-size: 20px;
+}
+
+label {
+	color: yellow;
+}
